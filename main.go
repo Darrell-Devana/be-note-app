@@ -2,8 +2,12 @@ package main
 
 import (
 	"fmt"
+
+	"github.com/Darrell-Devana/be-note-app/util"
 )
 
 func main() {
-	fmt.Println("Hello world")
+	message := "Hello this is a message"
+	messageUpper := util.ToUpperCase(message)
+	fmt.Println(messageUpper)
 }
