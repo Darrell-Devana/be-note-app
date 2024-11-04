@@ -74,7 +74,7 @@ func main() {
 
 	r.Use(cors.Default())
 
-	err := godotenv.Load("application.env")
+	err := godotenv.Load()
 	if err != nil {
 		panic(err)
 	}
