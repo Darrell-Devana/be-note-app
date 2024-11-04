@@ -34,7 +34,7 @@ func addNote(c *gin.Context) {
 
 	fmt.Println("Title:", note.Title, "Content:", note.Content)
 
-	_, errSql := database.DB.Exec("insert into notes(content, title) values ($1, $2)", note.Content, note.Title)
+	_, errSql := database.DB.Exec("insert into notes(content, title, is_favorite) values ($1, $2, $3)", note.Content, note.Title, note.IsFavorite)
 	if errSql != nil {
 		fmt.Println(errSql)
 		c.JSON(http.StatusInternalServerError, gin.H{"code": "500", "message": "Database operation failed"})
