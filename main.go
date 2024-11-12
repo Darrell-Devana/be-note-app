@@ -32,12 +32,10 @@ func addNote(c *gin.Context) {
 	}
 
 	var noteID string
-	errSql := database.DB.QueryRow(
+	if errSql := database.DB.QueryRow(
 		"INSERT INTO notes(content, title, is_favorite, text_content) VALUES ($1, $2, $3, $4) RETURNING id",
 		note.Content, note.Title, note.IsFavorite, note.TextContent,
-	).Scan(&noteID)
-
-	if errSql != nil {
+	).Scan(&noteID); errSql != nil {
 		fmt.Println(errSql)
 		c.JSON(http.StatusInternalServerError, gin.H{"code": "500", "message": "Database operation failed"})
 		return
@@ -90,8 +88,7 @@ func openNote(c *gin.Context) {
 		notes = append(notes, note)
 	}
 
-	_, err = database.DB.Exec("update notes set last_visited = now() where id = $1", notes[0].ID)
-	if err != nil {
+	if _, err = database.DB.Exec("update notes set last_visited = now() where id = $1", notes[0].ID); err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"code": "500", "message": "Database operation failed"})
 		return
@@ -109,8 +106,7 @@ func updateNote(c *gin.Context) {
 
 	fmt.Println(note)
 
-	_, err := database.DB.Exec("update notes set content = $2, title = $3, is_favorite = $4, created_at = $5, updated_at = now(), last_visited = now(), text_content = $6 where id = $1", note.ID, note.Content, note.Title, note.IsFavorite, note.CreatedAt, note.TextContent)
-	if err != nil {
+	if _, err := database.DB.Exec("update notes set content = $2, title = $3, is_favorite = $4, created_at = $5, updated_at = now(), last_visited = now(), text_content = $6 where id = $1", note.ID, note.Content, note.Title, note.IsFavorite, note.CreatedAt, note.TextContent); err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"code": "500", "message": "Database operation failed"})
 		return
@@ -161,8 +157,7 @@ func deleteNote(c *gin.Context) {
 	id := c.Param("id")
 	fmt.Println(id)
 
-	_, err := database.DB.Exec("delete from notes where id = $1", id)
-	if err != nil {
+	if _, err := database.DB.Exec("delete from notes where id = $1", id); err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"code": "500", "message": "Database operation failed"})
 		return
@@ -175,8 +170,7 @@ func main() {
 	r := gin.Default()
 	r.Use(cors.Default())
 
-	err := godotenv.Load()
-	if err != nil {
+	if err := godotenv.Load(); err != nil {
 		panic(err)
 	}
 
