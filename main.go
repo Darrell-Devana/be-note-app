@@ -23,6 +23,25 @@ type Note struct {
 	IsFavorite  bool            `json:"isFavorite"`
 }
 
+func main() {
+	r := gin.Default()
+	r.Use(cors.Default())
+
+	if err := godotenv.Load(); err != nil {
+		panic(err)
+	}
+
+	database.ConnectDatabase()
+
+	r.POST("/add", addNote)
+	r.GET("/list", listNote)
+	r.GET("/notes/:id", openNote)
+	r.POST("/update", updateNote)
+	r.POST("/delete/:id", deleteNote)
+	r.POST("/favorite/:id", favoriteNote)
+	r.Run(":8008")
+}
+
 func addNote(c *gin.Context) {
 	note := Note{}
 	if err := c.ShouldBindJSON(&note); err != nil {
@@ -164,23 +183,4 @@ func deleteNote(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"code": "200", "message": "Note deleted successfully", "deleted": id})
-}
-
-func main() {
-	r := gin.Default()
-	r.Use(cors.Default())
-
-	if err := godotenv.Load(); err != nil {
-		panic(err)
-	}
-
-	database.ConnectDatabase()
-
-	r.POST("/add", addNote)
-	r.GET("/list", listNote)
-	r.GET("/notes/:id", openNote)
-	r.POST("/update", updateNote)
-	r.POST("/delete/:id", deleteNote)
-	r.POST("/favorite/:id", favoriteNote)
-	r.Run(":8008")
 }
